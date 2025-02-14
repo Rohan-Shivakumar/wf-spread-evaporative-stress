@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+fires = [
+    # Write fire names
+]
+
+days = list(range(-14, 15))
+
+fire_data = {
+    # Write percent drops
+}
+
+percent_declines = pd.DataFrame.from_dict(fire_data, orient='index', columns=["Percent Decline"])
+
+plt.figure(figsize=(10, 6))
+plt.bar(percent_declines.index, percent_declines["Percent Decline"], color='royalblue', edgecolor='black')
+plt.axhline(y=0, color='black', linewidth=1)  # Reference line at 0%
+plt.xlabel("Fire Name")
+plt.ylabel("Percentage Change in EToF (%)")
+plt.title("Percentage Decline in EToF Across Fires")
+plt.xticks(rotation=45, ha='right')
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.show()
+
+np.random.seed(42)
+time_series_data = {fire: np.linspace(np.random.uniform(0.4, 0.9), np.random.uniform(0.1, 0.4), 29) for fire in fires}
+
+plt.figure(figsize=(10, 6))
+for fire, values in time_series_data.items():
+    plt.plot(days, values, label=fire, linewidth=1.5)
+
+plt.xlabel("Days Relative to Fire")
+plt.ylabel("Mean EToF")
+plt.title("EToF Trends Over Time for Each Fire")
+plt.axvline(x=0, color='black', linestyle='--', linewidth=1, label="Fire Event (Day 0)")
+plt.legend(loc="upper right", fontsize=8, bbox_to_anchor=(1.3, 1))
+plt.grid(alpha=0.5)
+plt.show()
