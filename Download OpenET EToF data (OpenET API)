@@ -1,0 +1,17 @@
+{
+  "asset_id": // Insert asset ID,
+  "attributes": [
+    "label"
+  ],
+  "date_range": [
+    // Example dates--depends on fire date
+    "2019-01-01",
+    "2019-12-31"
+  ],
+  "interval": "daily",
+  "model": "ptJPL", // Download data for all models
+  "reducer": "mean",
+  "reference_et": "gridMET",
+  "units": "mm",
+  "variable": "EToF"
+}
