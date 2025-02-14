@@ -1,0 +1,37 @@
+// load in tiff
+var lst = // path to tiff file;
+
+// calculate mean over lst map
+var mean = lst.reduceRegion({
+  reducer: ee.Reducer.mean(),
+  geometry: lst.geometry(),
+  scale: 30,
+  maxPixels: 1e9
+}).get('b1');
+
+// calculate stdev over lst map
+var stdev = lst.reduceRegion({
+  reducer: ee.Reducer.stdDev(),
+  geometry: lst.geometry(),
+  scale: 30,
+  maxPixels: 1e9
+}).get('b1');
+
+// get region that is >= mean + 2 * stdev
+var mask = lst.gt(ee.Number(mean).add(ee.Number(stdev).multiply(2)));
+var edge = lst.updateMask(mask);
+
+// map original & mask
+Map.centerObject(lst, 10);
+Map.addLayer(lst, {min: 250, max: 350, palette: ['blue', 'yellow', 'red']}, 'Original LST');
+Map.addLayer(edge, {min: 250, max: 350, palette: ['white', 'orange', 'red']}, 'Edge of Fire');
+
+// export as tiff
+Export.image.toDrive({
+  image: edge,
+  description: // name,
+  scale: 30,
+  region: lst.geometry(),
+  fileFormat: 'GeoTIFF',
+  maxPixels: 1e9
+});
