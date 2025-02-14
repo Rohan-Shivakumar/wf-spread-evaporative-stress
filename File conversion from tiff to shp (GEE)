@@ -1,0 +1,43 @@
+// CREDIT: Will Carrara
+
+// Step 1: Load a sample image and create a binary mask
+
+var image = raster;
+
+var mask = image.gt(0);
+
+ 
+
+// Step 2: Reduce mask to vector (Feature Collection)
+
+var vectors = mask.selfMask().reduceToVectors({
+
+  geometryType: 'polygon',
+
+  scale: 30, // Define the scale at which to create polygons
+
+  maxPixels: 1e8
+
+});
+
+ 
+
+// Step 3: Display the original mask and the resulting vectors on the map
+
+Map.addLayer(mask, {palette: ['blue']}, 'Binary Mask');
+
+Map.addLayer(vectors, {}, 'Vectors');
+
+ 
+
+// Step 4: Export the vectors as a shapefile
+
+Export.table.toDrive({
+
+  collection: vectors,
+
+  description: 'backbone_fire_edge172',
+
+  fileFormat: 'SHP'
+
+});
