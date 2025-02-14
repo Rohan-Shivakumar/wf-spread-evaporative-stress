@@ -1,0 +1,94 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+categories = ["EToF (7 days before)", 
+              "EToF (7 days after)", 
+              "EToF Decrease # Days Prior to Fire", 
+              "[Spikes] % EToF Increase"]
+
+means_primary = [0.39, 0.26, None, 0.1164]  # EToF and % (as decimal)
+std_primary   = [0.13, 0.12, None, 0.0407]
+
+means_secondary = [None, None, 4.00, None]  # Number of days
+std_secondary   = [None, None, 1.53, None]
+
+n_primary   = [6, 6, None, 6]    # sample sizes for primary metrics
+n_secondary = [None, None, 6, None]  # sample sizes for secondary metrics
+
+def sd_to_se(std_list, n_list):
+    se_list = []
+    for std_val, n_val in zip(std_list, n_list):
+        if std_val is not None and n_val is not None:
+            se_val = std_val / np.sqrt(n_val)
+        else:
+            se_val = None
+        se_list.append(se_val)
+    return se_list
+
+se_primary   = sd_to_se(std_primary, n_primary)
+se_secondary = sd_to_se(std_secondary, n_secondary)
+
+x = np.arange(len(categories))
+width = 0.4  # Width of the bars
+
+fig, ax1 = plt.subplots(figsize=(10, 6))
+
+primary_bars = ax1.bar(
+    x[0],
+    means_primary[0],
+    width,
+    yerr=se_primary[0],
+    color='blue',
+    alpha=0.7,
+    label='Evaporative Stress (7 days before)'
+)
+
+secondary_bars_1 = ax1.bar(
+    x[1],
+    means_primary[1],
+    width,
+    yerr=se_primary[1],
+    color='blue',
+    alpha=0.7,
+    label='Evaporative Stress (7 days after)'
+)
+
+percent_bars = ax1.bar(
+    x[3],
+    means_primary[3],
+    width,
+    yerr=se_primary[3],
+    color='orange',
+    alpha=0.7,
+    label='Percent Increase'
+)
+
+ax2 = ax1.twinx()
+secondary_bars_2 = ax2.bar(
+    x[2],
+    means_secondary[2],
+    width,
+    yerr=se_secondary[2],
+    color='green',
+    alpha=0.7,
+    label='Days from drop to fire edge'
+)
+
+ax1.set_ylabel("Percent", fontsize=12, color='blue')
+ax2.set_ylabel(
+    "Number of Days", 
+    fontsize=12, 
+    color='green',
+    rotation=270,   # <--- Rotate it 180 degrees
+    labelpad=15     # <--- Adjust spacing to suit
+)
+
+plt.xticks(ticks=x, labels=categories, rotation=45, fontsize=12)
+
+handles1, labels1 = ax1.get_legend_handles_labels()
+handles2, labels2 = ax2.get_legend_handles_labels()
+all_handles = handles1 + handles2
+all_labels  = labels1 + labels2
+
+plt.tight_layout()
+plt.show()
